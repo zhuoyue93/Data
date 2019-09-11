@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -25,16 +26,17 @@ public class PersonControl {
     private BdPsndocMapper userMapper;
 
     private static final String DATA="data";
+    private static final String RESULT="result";
     @RequestMapping("/getUser")
     public void getUser() throws JsonProcessingException {
         List<BdPsndoc> userEntities = userMapper.selectByExample(new BdPsndocExample());
         for (BdPsndoc userEntity : userEntities) {
             redisTemplate.opsForHash().put(DATA,userEntity.getPkPsndoc(), new ObjectMapper().writeValueAsString(userEntity));
         }
-        Set<Object> data = redisTemplate.opsForHash().keys(DATA);
-        for (Object datum : data) {
-            Object o = redisTemplate.opsForHash().get(DATA, datum);
-            System.out.println(o);
-        }
+    }
+
+    @RequestMapping("/getResult")
+    public Map getResult() throws JsonProcessingException {
+        return redisTemplate.opsForHash().entries(RESULT);
     }
 }
