@@ -7,7 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="webredis" />
-        <module name="Data" />
+        <module name="flink" />
       </profile>
     </annotationProcessing>
   </component>
