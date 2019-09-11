@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="OracleTables" targetRuntime="MyBatis3">
+        <!--配置数据库连接-->
+        <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@20.10.130.222:1521:orcl"
+                        userId="POC0621"
+                        password="1">
+        </jdbcConnection>
+        <!-- 非必需，类型处理器，在数据库类型和java类型之间的转换控制-->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- Model模型生成器,用来生成含有主键key的类-->
+        <javaModelGenerator targetPackage="com.example.webredis.data" targetProject="src\main\java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="src\main\resources\mybits\resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!--type：ANNOTATEDMAPPER（注解模式），XMLMAPPER（xml模式）-->
+        <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="com.example.webredis.data" targetProject="src\main\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--具体要生成的表-->
+        <table tableName="BD_PSNDOC">
+        </table>
+    </context>
+</generatorConfiguration>
