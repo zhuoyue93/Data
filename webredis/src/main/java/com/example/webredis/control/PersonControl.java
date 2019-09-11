@@ -36,7 +36,7 @@ public class PersonControl {
     }
 
     @RequestMapping("/getResult")
-    public Map getResult() throws JsonProcessingException {
+    public Map getResult() {
         return redisTemplate.opsForHash().entries(RESULT);
     }
 }
