@@ -51,8 +51,9 @@ public class StreamingJob {
                     Map<String, String> stringStringMap = jedis.hgetAll(DATA);
                     for (String value : stringStringMap.values()) {
                         ctx.collect(value);
+                        Thread.sleep(100);
                     }
-                    Thread.sleep(100);
+
 				}
 			}
 			@Override
@@ -75,7 +76,7 @@ public class StreamingJob {
 					}
 				})
 				.keyBy("word")
-				.timeWindow(Time.seconds(50), Time.seconds(1))
+				.timeWindow(Time.days(1), Time.seconds(1))
 				.reduce(new ReduceFunction<WordWithCount>() {
 					public WordWithCount reduce(WordWithCount a, WordWithCount b) {
 						return new WordWithCount(a.word, a.count + b.count);

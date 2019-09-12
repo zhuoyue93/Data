@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
+@CrossOrigin
 @RestController
 public class PersonControl {
     @Autowired
@@ -36,7 +39,7 @@ public class PersonControl {
     }
 
     @RequestMapping("/getResult")
-    public Map getResult() {
-        return redisTemplate.opsForHash().entries(RESULT);
+    public String getResult() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(redisTemplate.opsForHash().entries(RESULT));
     }
 }
