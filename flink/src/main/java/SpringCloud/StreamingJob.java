@@ -35,81 +35,75 @@ import java.util.Map;
 
 public class StreamingJob {
 
-	public static void main(String[] args) throws Exception {
-		final StreamExecutionEnvironment env = StreamExecutionEnvironment
-				.getExecutionEnvironment();
-
-		final String DATA="data";
-
-		// 输入流
-		DataStream<String> text = env.addSource(new SourceFunction<String>() {
-
-			@Override
-			public void run(SourceContext<String> ctx) throws Exception {
-				while (true){
-					final Jedis jedis = new Jedis("127.0.0.1", 6379);
+    public static void main(String[] args) throws Exception {
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        final String DATA = "data";
+        // 输入流
+        DataStream<String> text = env.addSource(new SourceFunction<String>() {
+            @Override
+            public void run(SourceContext<String> ctx) throws Exception {
+                while (true) {
+                    final Jedis jedis = new Jedis("127.0.0.1", 6379);
                     Map<String, String> stringStringMap = jedis.hgetAll(DATA);
                     for (String value : stringStringMap.values()) {
                         ctx.collect(value);
                         Thread.sleep(100);
                     }
+                }
+            }
 
-				}
-			}
-			@Override
-			public void cancel() {
-			}
-		});
-		// 配置计算MapReduce
-		DataStream<WordWithCount> windowCounts = text
-				.flatMap(new FlatMapFunction<String, WordWithCount>() {
-					public void flatMap(String value, Collector<WordWithCount> out)  {
-						BdPsndoc bdPsndoc = null;
-						try {
-							bdPsndoc = new ObjectMapper().readValue(value, BdPsndoc.class);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						if(bdPsndoc!=null){
-							out.collect(new WordWithCount(bdPsndoc.getAge(), 1L));
-						}
-					}
-				})
-				.keyBy("word")
-				.timeWindow(Time.days(1), Time.seconds(1))
-				.reduce(new ReduceFunction<WordWithCount>() {
-					public WordWithCount reduce(WordWithCount a, WordWithCount b) {
-						return new WordWithCount(a.word, a.count + b.count);
-					}
-				});
-        final String RESULT="result";
-		windowCounts.addSink(new SinkFunction<WordWithCount>() {
-			@Override
-			public void invoke(WordWithCount wordWithCount) throws Exception {
-				final Jedis jedis = new Jedis("127.0.0.1", 6379);
-				if(wordWithCount!=null&&wordWithCount.word!=null){
-					jedis.hset(RESULT, wordWithCount.word, wordWithCount.count+"");
-					System.out.println(wordWithCount.word+":"+wordWithCount.count);
-				}
-			}
-		}).setParallelism(1);
-		env.execute("Flink Streaming Java API Skeleton");
-	}
-	public static class WordWithCount {
+            @Override
+            public void cancel() {
+            }
+        });
+        // 配置计算MapReduce
+        DataStream<WordWithCount> windowCounts = text
+                .flatMap(new FlatMapFunction<String, WordWithCount>() {
+                    public void flatMap(String value, Collector<WordWithCount> out) {
+                        BdPsndoc bdPsndoc = null;
+                        try {
+                            bdPsndoc = new ObjectMapper().readValue(value, BdPsndoc.class);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (bdPsndoc != null) {
+                            out.collect(new WordWithCount(bdPsndoc.getAge(), 1L));
+                        }
+                    }
+                })
+                .keyBy("word")
+                .timeWindow(Time.days(1), Time.seconds(1))
+                .reduce(new ReduceFunction<WordWithCount>() {
+                    public WordWithCount reduce(WordWithCount a, WordWithCount b) {
+                        return new WordWithCount(a.word, a.count + b.count);
+                    }
+                });
+        final String RESULT = "result";
+        windowCounts.addSink(new SinkFunction<WordWithCount>() {
+            @Override
+            public void invoke(WordWithCount wordWithCount) throws Exception {
+                final Jedis jedis = new Jedis("127.0.0.1", 6379);
+                if (wordWithCount != null && wordWithCount.word != null) {
+                    jedis.hset(RESULT, wordWithCount.word, wordWithCount.count + "");
+                    System.out.println(wordWithCount.word + ":" + wordWithCount.count);
+                }
+            }
+        }).setParallelism(1);
+        env.execute("Flink Streaming Java API Skeleton");
+    }
 
-		public String word;
-		public long count;
+    public static class WordWithCount {
 
-		public WordWithCount() {}
+        public String word;
+        public long count;
 
-		public WordWithCount(String word, long count) {
-			this.word = word;
-			this.count = count;
-		}
-
-		@Override
-		public String toString() {
-			return word + " : " + count;
-		}
-	}
+        public WordWithCount(String word, long count) {
+            this.word = word;
+            this.count = count;
+        }
+        @Override
+        public String toString() {
+            return word + " : " + count;
+        }
+    }
 }
