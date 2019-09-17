@@ -73,7 +73,7 @@ for i in range(k):
 # print('all_scores: ', all_scores)
 # print('mean ', np.mean(all_scores))
 average_mae_history = [np.mean([x[i] for x in all_mae_histories]) for i in range(num_epochs)]
-print('average_mae_history: ', average_mae_history)
+# print('average_mae_history: ', average_mae_history)
 
 # Plotting validation scores
 import matplotlib.pyplot as plt
