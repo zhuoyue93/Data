@@ -30,6 +30,7 @@ public class PersonControl {
 
     private static final String DATA="data";
     private static final String RESULT="result";
+    private static final String AREARESULT="arearesult";
     @RequestMapping("/getUser")
     public void getUser() throws JsonProcessingException {
         List<BdPsndoc> userEntities = userMapper.selectByExample(new BdPsndocExample());
@@ -40,6 +41,6 @@ public class PersonControl {
 
     @RequestMapping("/getResult")
     public String getResult() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(redisTemplate.opsForHash().entries(RESULT));
+        return new ObjectMapper().writeValueAsString(redisTemplate.opsForHash().entries(AREARESULT));
     }
 }

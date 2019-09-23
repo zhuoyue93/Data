@@ -33,7 +33,7 @@ import redis.clients.jedis.Jedis;
 import java.io.IOException;
 import java.util.Map;
 
-public class StreamingJob {
+public class AreaStreamingJob {
 
     public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -50,6 +50,7 @@ public class StreamingJob {
                     }
                 }
             }
+
             @Override
             public void cancel() {
             }
@@ -65,7 +66,7 @@ public class StreamingJob {
                             e.printStackTrace();
                         }
                         if (bdPsndoc != null) {
-                            out.collect(new WordWithCount(bdPsndoc.getAge(), 1L));
+                            out.collect(new WordWithCount(bdPsndoc.getCreator(), 1L));
                         }
                     }
                 })
@@ -76,7 +77,7 @@ public class StreamingJob {
                         return new WordWithCount(a.word, a.count + b.count);
                     }
                 });
-        final String RESULT = "result";
+        final String RESULT = "arearesult";
         windowCounts.addSink(new SinkFunction<WordWithCount>() {
             @Override
             public void invoke(WordWithCount wordWithCount) throws Exception {
