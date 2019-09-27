@@ -106,7 +106,7 @@ plt.xlabel('Epochs')
 plt.ylabel('Validation MAE')
 plt.show()
 
-# 根据前面的MAE分析， epochs=80 会是一个合适的模型,下面重新训练模型
+# 根据前面的MAE分析， epochs=80(从打印的图中判断得出) 会是一个合适的模型,下面重新训练模型
 
 model = build_network()
 model.fit(train_data, train_targets,
@@ -115,3 +115,8 @@ model.fit(train_data, train_targets,
 test_mse_score, test_mae_score = model.evaluate(test_data, test_targets)
 
 print('test_mae_score: ', test_mae_score)  # Mean Squared Error
+
+
+model.save('house_model.h5')
+from keras.models import load_model
+model = load_model('house_model.h5')
